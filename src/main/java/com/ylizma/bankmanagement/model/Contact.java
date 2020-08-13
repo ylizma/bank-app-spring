@@ -2,11 +2,7 @@ package com.ylizma.bankmanagement.model;
 
 import java.util.UUID;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,12 +19,16 @@ public class Contact {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="CONTACT_ID")
-	private UUID id;
+	private Long id;
 
 	private String emailId;
 
 	private String homePhone;
 
 	private String workPhone;
+
+//	@OneToOne(mappedBy = "contactDetails")
+//	private Customer customer;
+
 
 }

@@ -17,6 +17,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 @Entity
 @Data
@@ -28,7 +30,7 @@ public class Customer {
     @Id
     @GeneratedValue
     @Column(name="CUST_ID")
-    private UUID id;
+    private Long id;
 
     private String firstName;
 
@@ -41,9 +43,11 @@ public class Customer {
     private String status;
 
     @ManyToOne(cascade=CascadeType.ALL)
+    @NotFound(action = NotFoundAction.IGNORE)
     private Address customerAddress;
 
     @OneToOne(cascade=CascadeType.ALL)
+    @NotFound(action = NotFoundAction.IGNORE)
     private Contact contactDetails;
 
     @Temporal(TemporalType.TIME)

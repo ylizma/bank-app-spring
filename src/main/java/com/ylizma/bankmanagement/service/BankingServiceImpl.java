@@ -30,15 +30,22 @@ public class BankingServiceImpl implements BankingService {
     public List<CustomerDetails> findAll() {
         List<CustomerDetails> allCustomerDetails = new ArrayList<>();
         Iterable<Customer> customerList = customerRepository.findAll();
-        customerList.forEach(customer -> allCustomerDetails.add(bankingServiceHelper.convertToCustomerDomain(customer)));
+        customerList.forEach(customer -> {
+            allCustomerDetails.add(bankingServiceHelper.convertToCustomerDomain(customer));
+        });
         return allCustomerDetails;
     }
 
     @Override
     public ResponseEntity<Object> addCustomer(CustomerDetails customerDetails) {
-        Customer newCostomer = bankingServiceHelper.convertToCustomerEntity(customerDetails);
-        customerRepository.save(newCostomer);
-        return ResponseEntity.status(HttpStatus.CREATED).body("New Customer created successfully.");
+        CustomerDetails checkCustomer = findByCustomerNumber(customerDetails.getCustomerNumber());
+        if (checkCustomer != null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Customer with the Number " + customerDetails.getCustomerNumber() + " Exist Already");
+        } else {
+            Customer newCostomer = bankingServiceHelper.convertToCustomerEntity(customerDetails);
+            customerRepository.save(newCostomer);
+            return ResponseEntity.status(HttpStatus.CREATED).body("New Customer created successfully.");
+        }
     }
 
     @Override
