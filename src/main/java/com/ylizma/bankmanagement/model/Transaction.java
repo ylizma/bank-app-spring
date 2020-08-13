@@ -3,13 +3,7 @@ package com.ylizma.bankmanagement.model;
 import java.util.Date;
 import java.util.UUID;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,7 +22,8 @@ public class Transaction {
 	@Column(name="TX_ID")
 	private UUID id;
 
-	private Long accountNumber;
+	@OneToOne
+	private Account accountNumber;
 
 	@Temporal(TemporalType.TIME)
 	private Date txDateTime;

@@ -22,5 +22,5 @@ public class CustomerDetails {
     private AddressDetails customerAddress;
     
     private ContactDetails contactDetails;
-    
+
 }

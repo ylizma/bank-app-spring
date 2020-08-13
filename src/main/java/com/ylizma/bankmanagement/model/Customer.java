@@ -46,9 +46,6 @@ public class Customer {
     @OneToOne(cascade=CascadeType.ALL)
     private Contact contactDetails;
 
-    @OneToOne(cascade=CascadeType.ALL)
-    private Account account;
-
     @Temporal(TemporalType.TIME)
 	private Date createDateTime;
 

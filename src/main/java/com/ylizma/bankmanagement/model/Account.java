@@ -41,6 +41,9 @@ public class Account {
 
     private Double accountBalance;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    private Customer customer;
+
     @Temporal(TemporalType.TIME)
     private Date createDateTime;
 
