@@ -1,6 +1,5 @@
 package com.ylizma.bankmanagement.model;
 
-import java.util.UUID;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -25,7 +24,7 @@ public class BankInfo {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="BANK_ID")
-	private UUID id;
+	private Long id;
 
 	private String branchName;
 

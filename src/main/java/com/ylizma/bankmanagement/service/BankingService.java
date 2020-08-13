@@ -1,6 +1,8 @@
 package com.ylizma.bankmanagement.service;
 
 import java.util.List;
+
+import com.ylizma.bankmanagement.domain.AccountCustomerInfo;
 import com.ylizma.bankmanagement.domain.CustomerDetails;
 import org.springframework.http.ResponseEntity;
 
@@ -14,6 +16,10 @@ public interface BankingService {
 
     public ResponseEntity<Object> updateCustomer(CustomerDetails customerDetails, Long customerNumber);
 
-    public ResponseEntity<Object> deleteCustomer(Long customerNumber) ;
+    public ResponseEntity<Object> deleteCustomer(Long customerNumber);
+
+    public ResponseEntity<Object> findByAccountNumber(Long accountNumber);
+
+    public ResponseEntity<Object> addNewAccount(AccountCustomerInfo accountInformation);
 
 }

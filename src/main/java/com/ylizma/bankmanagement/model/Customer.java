@@ -1,8 +1,6 @@
 package com.ylizma.bankmanagement.model;
 
 import java.util.Date;
-import java.util.UUID;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;

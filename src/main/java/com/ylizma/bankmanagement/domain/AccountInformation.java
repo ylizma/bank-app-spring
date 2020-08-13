@@ -1,6 +1,4 @@
 package com.ylizma.bankmanagement.domain;
-
-import com.ylizma.bankmanagement.model.Customer;
 import lombok.*;
 
 import java.util.Date;
@@ -24,5 +22,5 @@ public class AccountInformation {
 	
 	private Date accountCreated;
 
-	private Customer customer;
+	private CustomerDetails customerDetails;
 }

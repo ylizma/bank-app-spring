@@ -41,6 +41,7 @@ public class BankingServiceHelper {
 				.accountBalance(account.getAccountBalance())
 				.accountNumber(account.getAccountNumber())
 				.accountStatus(account.getAccountStatus())
+				.customerDetails(convertToCustomerDomain(account.getCustomer()))
 				.bankInformation(convertToBankInfoDomain(account.getBankInformation()))
 				.build();
 	}
@@ -52,7 +53,19 @@ public class BankingServiceHelper {
 				.accountBalance(accInfo.getAccountBalance())
 				.accountNumber(accInfo.getAccountNumber())
 				.accountStatus(accInfo.getAccountStatus())
+				.customer(convertToCustomerEntity(accInfo.getCustomerDetails()))
 				.bankInformation(convertToBankInfoEntity(accInfo.getBankInformation()))
+				.build();
+	}
+
+	public Account convertToAccountCustomerEntity(AccountCustomerInfo accountCustomerInfo,Customer customer){
+		return Account.builder()
+				.accountType(accountCustomerInfo.getAccountType())
+				.accountBalance(accountCustomerInfo.getAccountBalance())
+				.accountNumber(accountCustomerInfo.getAccountNumber())
+				.accountStatus(accountCustomerInfo.getAccountStatus())
+				.bankInformation(convertToBankInfoEntity(accountCustomerInfo.getBankInformation()))
+				.customer(customer)
 				.build();
 	}
 	

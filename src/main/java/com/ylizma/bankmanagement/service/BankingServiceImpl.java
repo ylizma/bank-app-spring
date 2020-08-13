@@ -1,9 +1,12 @@
 package com.ylizma.bankmanagement.service;
 
+import com.ylizma.bankmanagement.domain.AccountCustomerInfo;
 import com.ylizma.bankmanagement.domain.CustomerDetails;
+import com.ylizma.bankmanagement.model.Account;
 import com.ylizma.bankmanagement.model.Address;
 import com.ylizma.bankmanagement.model.Contact;
 import com.ylizma.bankmanagement.model.Customer;
+import com.ylizma.bankmanagement.repository.AccountRepository;
 import com.ylizma.bankmanagement.repository.CustomerRepository;
 import com.ylizma.bankmanagement.service.helper.BankingServiceHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,14 +28,16 @@ public class BankingServiceImpl implements BankingService {
     private CustomerRepository customerRepository;
     @Autowired
     private BankingServiceHelper bankingServiceHelper;
+    @Autowired
+    private AccountRepository accountRepository;
 
     @Override
     public List<CustomerDetails> findAll() {
         List<CustomerDetails> allCustomerDetails = new ArrayList<>();
         Iterable<Customer> customerList = customerRepository.findAll();
-        customerList.forEach(customer -> {
-            allCustomerDetails.add(bankingServiceHelper.convertToCustomerDomain(customer));
-        });
+        customerList.forEach(customer ->
+                allCustomerDetails.add(bankingServiceHelper.convertToCustomerDomain(customer))
+        );
         return allCustomerDetails;
     }
 
@@ -109,6 +114,27 @@ public class BankingServiceImpl implements BankingService {
             return ResponseEntity.status(HttpStatus.OK).body("Success: Customer deleted.");
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Customer does not exist.");
+        }
+    }
+
+    @Override
+    public ResponseEntity<Object> findByAccountNumber(Long accountNumber) {
+        Optional<Account> account = accountRepository.findByAccountNumber(accountNumber);
+        return account.<ResponseEntity<Object>>map(value -> ResponseEntity.status(HttpStatus.FOUND).body(bankingServiceHelper.convertToAccountDomain(value))).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account Number " + accountNumber + " not found."));
+    }
+
+    @Override
+    public ResponseEntity<Object> addNewAccount(AccountCustomerInfo accountCustomerInfo) {
+        if (accountRepository.findByAccountNumber(accountCustomerInfo.getAccountNumber()).isPresent()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Account already exist");
+        } else {
+            Optional<Customer> customer = customerRepository.findByCustomerNumber(accountCustomerInfo.getCustomerNumber());
+            if (customer.isPresent()) {
+                Account account = bankingServiceHelper.convertToAccountCustomerEntity(accountCustomerInfo,customer.get());
+                accountRepository.save(account);
+                return ResponseEntity.status(HttpStatus.CREATED).body("New Account created successfully.");
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Customer doesnt exist");
         }
     }
 }

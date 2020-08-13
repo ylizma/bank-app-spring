@@ -1,7 +1,5 @@
 package com.ylizma.bankmanagement.model;
 
-import java.util.List;
-import java.util.UUID;
 
 import javax.persistence.*;
 
@@ -28,8 +26,5 @@ public class Address {
 	private String state;
 	private String zip;
 	private String country;
-
-//	@OneToMany(mappedBy = "customerAddress")
-//	private List<Customer> customer;
 
 }

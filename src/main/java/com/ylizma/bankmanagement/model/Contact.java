@@ -1,6 +1,5 @@
 package com.ylizma.bankmanagement.model;
 
-import java.util.UUID;
 
 import javax.persistence.*;
 
@@ -27,8 +26,6 @@ public class Contact {
 
 	private String workPhone;
 
-//	@OneToOne(mappedBy = "contactDetails")
-//	private Customer customer;
 
 
 }

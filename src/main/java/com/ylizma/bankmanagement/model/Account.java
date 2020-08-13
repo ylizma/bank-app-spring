@@ -1,7 +1,6 @@
 package com.ylizma.bankmanagement.model;
 
 import java.util.Date;
-import java.util.UUID;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -28,7 +27,7 @@ public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ACCT_ID")
-    private UUID id;
+    private Long id;
 
     private Long accountNumber;
 
