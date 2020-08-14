@@ -2,6 +2,8 @@ package com.ylizma.bankmanagement.controller;
 
 import com.ylizma.bankmanagement.domain.AccountCustomerInfo;
 import com.ylizma.bankmanagement.domain.AccountInformation;
+import com.ylizma.bankmanagement.domain.TransactionDetails;
+import com.ylizma.bankmanagement.domain.TransferDetails;
 import com.ylizma.bankmanagement.service.BankingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -36,4 +38,16 @@ public class AccountController {
         return bankingService.findAccountByCustomerNumber(customerNumber);
     }
 
+    @PutMapping(path = "/transfer/{customerNumber}")
+    public ResponseEntity<Object> transferDetails(@RequestBody TransferDetails transferDetails,
+                                                  @PathVariable Long customerNumber) {
+
+        return bankingService.transferDetails(transferDetails, customerNumber);
+    }
+
+    @GetMapping(path = "/transactions/{accountNumber}")
+    public List<TransactionDetails> getTransactionByAccountNumber(@PathVariable Long accountNumber) {
+
+        return bankingService.findTransactionsByAccountNumber(accountNumber);
+    }
 }

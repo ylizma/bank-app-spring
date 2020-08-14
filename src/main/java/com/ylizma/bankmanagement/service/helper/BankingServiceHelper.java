@@ -4,6 +4,8 @@ import com.ylizma.bankmanagement.domain.*;
 import com.ylizma.bankmanagement.model.*;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
+
 @Component
 public class BankingServiceHelper {
 
@@ -127,5 +129,31 @@ public class BankingServiceHelper {
 				.routingNumber(bankInformation.getRoutingNumber())
 				.branchAddress(convertToAddressEntity(bankInformation.getBranchAddress()))
 				.build();
+	}
+	public Transaction createTransaction(TransferDetails transferDetails, Account accountNumber, TransactionType txType) {
+		return Transaction.builder()
+							.accountNumber(accountNumber)
+							.txAmount(transferDetails.getTransferAmount())
+							.txType(txType)
+							.txDateTime(new Date())
+							.build();
+	}
+		public Transaction convertToTransactionEntity(TransactionDetails transactionDetails) {
+
+		return Transaction.builder()
+							.txAmount(transactionDetails.getTxAmount())
+							.txDateTime(transactionDetails.getTxDateTime())
+							.txType(transactionDetails.getTxType())
+//							.accountNumber(account)
+							.build();
+	}
+		public TransactionDetails convertToTransactionDomain(Transaction transaction,Account account) {
+
+		return TransactionDetails.builder()
+									.txAmount(transaction.getTxAmount())
+									.txDateTime(transaction.getTxDateTime())
+									.txType(transaction.getTxType())
+									.accountInformation(convertToAccountDomain(account))
+									.build();
 	}
 }

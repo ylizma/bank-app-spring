@@ -1,7 +1,9 @@
 package com.ylizma.bankmanagement.domain;
 
+import com.ylizma.bankmanagement.model.TransactionType;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 @AllArgsConstructor
@@ -11,11 +13,11 @@ import java.util.Date;
 @Builder
 public class TransactionDetails {
 
-	private Long accountNumber;
+	private AccountInformation accountInformation;
 	
 	private Date txDateTime;
 	
-	private String txType;
+	private TransactionType txType;
 	
-	private Double txAmount;
+	private BigDecimal txAmount;
 }
