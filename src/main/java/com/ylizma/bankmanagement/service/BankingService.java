@@ -3,12 +3,13 @@ package com.ylizma.bankmanagement.service;
 import java.util.List;
 
 import com.ylizma.bankmanagement.domain.AccountCustomerInfo;
+import com.ylizma.bankmanagement.domain.AccountInformation;
 import com.ylizma.bankmanagement.domain.CustomerDetails;
 import org.springframework.http.ResponseEntity;
 
 public interface BankingService {
 
-    public List<CustomerDetails> findAll();
+    public List<CustomerDetails> findAllCustomers();
 
     public ResponseEntity<Object> addCustomer(CustomerDetails customerDetails);
 
@@ -21,5 +22,9 @@ public interface BankingService {
     public ResponseEntity<Object> findByAccountNumber(Long accountNumber);
 
     public ResponseEntity<Object> addNewAccount(AccountCustomerInfo accountInformation);
+
+    public List<AccountInformation> findAllAccounts();
+
+    public AccountInformation findAccountByCustomerNumber(Long customerNumber);
 
 }

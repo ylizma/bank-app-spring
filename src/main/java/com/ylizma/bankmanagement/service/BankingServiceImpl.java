@@ -1,6 +1,7 @@
 package com.ylizma.bankmanagement.service;
 
 import com.ylizma.bankmanagement.domain.AccountCustomerInfo;
+import com.ylizma.bankmanagement.domain.AccountInformation;
 import com.ylizma.bankmanagement.domain.CustomerDetails;
 import com.ylizma.bankmanagement.model.Account;
 import com.ylizma.bankmanagement.model.Address;
@@ -32,7 +33,7 @@ public class BankingServiceImpl implements BankingService {
     private AccountRepository accountRepository;
 
     @Override
-    public List<CustomerDetails> findAll() {
+    public List<CustomerDetails> findAllCustomers() {
         List<CustomerDetails> allCustomerDetails = new ArrayList<>();
         Iterable<Customer> customerList = customerRepository.findAll();
         customerList.forEach(customer ->
@@ -130,11 +131,30 @@ public class BankingServiceImpl implements BankingService {
         } else {
             Optional<Customer> customer = customerRepository.findByCustomerNumber(accountCustomerInfo.getCustomerNumber());
             if (customer.isPresent()) {
-                Account account = bankingServiceHelper.convertToAccountCustomerEntity(accountCustomerInfo,customer.get());
-                accountRepository.save(account);
-                return ResponseEntity.status(HttpStatus.CREATED).body("New Account created successfully.");
+                if (accountRepository.findByCustomerNumber(accountCustomerInfo.getCustomerNumber()).isPresent()) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("this customer has already an account");
+                } else {
+                    Account account = bankingServiceHelper.convertToAccountCustomerEntity(accountCustomerInfo, customer.get());
+                    accountRepository.save(account);
+                    return ResponseEntity.status(HttpStatus.CREATED).body("New Account created successfully.");
+                }
             }
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Customer doesnt exist");
         }
     }
+
+    @Override
+    public List<AccountInformation> findAllAccounts() {
+        Iterable<Account> accounts = accountRepository.findAll();
+        List<AccountInformation> accountInformationList = new ArrayList<>();
+        accounts.forEach(account -> accountInformationList.add(bankingServiceHelper.convertToAccountDomain(account)));
+        return accountInformationList;
+    }
+
+    @Override
+    public AccountInformation findAccountByCustomerNumber(Long customerNumber) {
+        Optional<Account> account = accountRepository.findByCustomerNumber(customerNumber);
+        return (account.isPresent()) ? (bankingServiceHelper.convertToAccountDomain(account.get())) : null;
+    }
+
 }
