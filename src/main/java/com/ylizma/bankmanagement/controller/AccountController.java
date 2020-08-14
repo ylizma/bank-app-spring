@@ -1,10 +1,13 @@
 package com.ylizma.bankmanagement.controller;
 
+import com.ylizma.bankmanagement.domain.AccountCustomerInfo;
 import com.ylizma.bankmanagement.domain.AccountInformation;
 import com.ylizma.bankmanagement.service.BankingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/accounts")
@@ -19,8 +22,18 @@ public class AccountController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Object> addNewAccount(@RequestBody AccountInformation accountInformation) {
-//        return bankingService.addNewAccount(accountInformation);
-        return null;
+    public ResponseEntity<Object> addNewAccount(@RequestBody AccountCustomerInfo accountInformation) {
+        return bankingService.addNewAccount(accountInformation);
     }
+
+    @GetMapping("/all")
+    public List<AccountInformation> getAllAccounts() {
+        return bankingService.findAllAccounts();
+    }
+
+    @GetMapping("/customer/{customerNumber}")
+    public AccountInformation getAccountByCustomer(@PathVariable Long customerNumber) {
+        return bankingService.findAccountByCustomerNumber(customerNumber);
+    }
+
 }

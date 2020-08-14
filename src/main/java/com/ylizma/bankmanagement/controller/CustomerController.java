@@ -22,7 +22,7 @@ public class CustomerController {
 
     @GetMapping("/all")
     public List<CustomerDetails> getAllCustomers() {
-        return bankingService.findAll();
+        return bankingService.findAllCustomers();
     }
 
     @GetMapping("/{customerNumber}")
