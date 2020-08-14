@@ -1,5 +1,6 @@
 package com.ylizma.bankmanagement.model;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
@@ -38,7 +39,7 @@ public class Account {
 
     private String accountType;
 
-    private Double accountBalance;
+    private BigDecimal accountBalance;
 
     @OneToOne(cascade = CascadeType.ALL)
     private Customer customer;

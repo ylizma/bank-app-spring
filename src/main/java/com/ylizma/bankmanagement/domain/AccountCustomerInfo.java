@@ -2,6 +2,7 @@ package com.ylizma.bankmanagement.domain;
 
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 @AllArgsConstructor
@@ -18,7 +19,7 @@ public class AccountCustomerInfo {
 
     private String accountType;
 
-    private Double accountBalance;
+    private BigDecimal accountBalance;
 
     private Date accountCreated;
 

@@ -1,14 +1,10 @@
 package com.ylizma.bankmanagement.service;
 
-import com.ylizma.bankmanagement.domain.AccountCustomerInfo;
-import com.ylizma.bankmanagement.domain.AccountInformation;
-import com.ylizma.bankmanagement.domain.CustomerDetails;
-import com.ylizma.bankmanagement.model.Account;
-import com.ylizma.bankmanagement.model.Address;
-import com.ylizma.bankmanagement.model.Contact;
-import com.ylizma.bankmanagement.model.Customer;
+import com.ylizma.bankmanagement.domain.*;
+import com.ylizma.bankmanagement.model.*;
 import com.ylizma.bankmanagement.repository.AccountRepository;
 import com.ylizma.bankmanagement.repository.CustomerRepository;
+import com.ylizma.bankmanagement.repository.TransactionRepository;
 import com.ylizma.bankmanagement.service.helper.BankingServiceHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,10 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Transactional
@@ -31,6 +24,8 @@ public class BankingServiceImpl implements BankingService {
     private BankingServiceHelper bankingServiceHelper;
     @Autowired
     private AccountRepository accountRepository;
+    @Autowired
+    private TransactionRepository transactionRepository;
 
     @Override
     public List<CustomerDetails> findAllCustomers() {
@@ -155,6 +150,88 @@ public class BankingServiceImpl implements BankingService {
     public AccountInformation findAccountByCustomerNumber(Long customerNumber) {
         Optional<Account> account = accountRepository.findByCustomerNumber(customerNumber);
         return (account.isPresent()) ? (bankingServiceHelper.convertToAccountDomain(account.get())) : null;
+    }
+
+    @Override
+    public ResponseEntity<Object> transferDetails(TransferDetails transferDetails, Long customerNumber) {
+
+        List<Account> accountEntities = new ArrayList<>();
+        Account fromAccountEntity = null;
+        Account toAccountEntity = null;
+
+        Optional<Customer> customerEntityOpt = customerRepository.findByCustomerNumber(customerNumber);
+        // If customer is present
+        if (customerEntityOpt.isPresent()) {
+
+            // get FROM ACCOUNT info
+            Optional<Account> fromAccountEntityOpt = accountRepository.findByAccountNumber(transferDetails.getFromAccountNumber());
+            if (fromAccountEntityOpt.isPresent()) {
+                if (!fromAccountEntityOpt.get().getCustomer().equals(customerEntityOpt.get())) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("the customer number doesn't match the account number!");
+                } else {
+                    fromAccountEntity = fromAccountEntityOpt.get();
+                }
+            } else {
+                // if from request does not exist, 404 Bad Request
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("From Account Number " + transferDetails.getFromAccountNumber() + " not found.");
+            }
+
+            // get TO ACCOUNT info
+            Optional<Account> toAccountEntityOpt = accountRepository.findByAccountNumber(transferDetails.getToAccountNumber());
+            if (toAccountEntityOpt.isPresent()) {
+                toAccountEntity = toAccountEntityOpt.get();
+            } else {
+                // if from request does not exist, 404 Bad Request
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("To Account Number " + transferDetails.getToAccountNumber() + " not found.");
+            }
+
+
+            // if not sufficient funds, return 400 Bad Request
+            if (fromAccountEntity.getAccountBalance().compareTo(transferDetails.getTransferAmount()) < 0) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Insufficient Funds.");
+            } else {
+                synchronized (this) {
+                    // update FROM ACCOUNT
+                    fromAccountEntity.setAccountBalance(fromAccountEntity.getAccountBalance().subtract(transferDetails.getTransferAmount()));
+                    fromAccountEntity.setUpdateDateTime(new Date());
+                    accountEntities.add(fromAccountEntity);
+
+                    // update TO ACCOUNT
+                    toAccountEntity.setAccountBalance(toAccountEntity.getAccountBalance().add(transferDetails.getTransferAmount()));
+                    toAccountEntity.setUpdateDateTime(new Date());
+                    accountEntities.add(toAccountEntity);
+
+                    accountRepository.saveAll(accountEntities);
+
+                    // Create transaction for FROM Account
+                    Transaction fromTransaction = bankingServiceHelper.createTransaction(transferDetails, fromAccountEntity, TransactionType.DEBIT);
+                    transactionRepository.save(fromTransaction);
+
+                    // Create transaction for TO Account
+                    Transaction toTransaction = bankingServiceHelper.createTransaction(transferDetails, toAccountEntity, TransactionType.CREDIT);
+                    transactionRepository.save(toTransaction);
+                }
+
+                return ResponseEntity.status(HttpStatus.OK).body("Success: Amount transferred for Customer Number " + customerNumber);
+            }
+
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Customer Number " + customerNumber + " not found.");
+        }
+    }
+
+    @Override
+    public List<TransactionDetails> findTransactionsByAccountNumber(Long accountNumber) {
+        List<TransactionDetails> transactionDetailsList = new ArrayList<>();
+        Optional<Account> account = accountRepository.findByAccountNumber(accountNumber);;
+        if (account.isPresent()) {
+            System.out.println(account.get().toString());
+            List<Transaction> transactions = transactionRepository.findByAccountNumber(accountNumber);
+//            System.out.println(Arrays.toString(transactions.get().toArray()));
+                    transactions.forEach(transaction -> transactionDetailsList
+                            .add(bankingServiceHelper.convertToTransactionDomain(transaction, account.get())));
+        }
+        return transactionDetailsList;
     }
 
 }

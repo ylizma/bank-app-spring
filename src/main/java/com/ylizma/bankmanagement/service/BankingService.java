@@ -2,9 +2,7 @@ package com.ylizma.bankmanagement.service;
 
 import java.util.List;
 
-import com.ylizma.bankmanagement.domain.AccountCustomerInfo;
-import com.ylizma.bankmanagement.domain.AccountInformation;
-import com.ylizma.bankmanagement.domain.CustomerDetails;
+import com.ylizma.bankmanagement.domain.*;
 import org.springframework.http.ResponseEntity;
 
 public interface BankingService {
@@ -26,5 +24,9 @@ public interface BankingService {
     public List<AccountInformation> findAllAccounts();
 
     public AccountInformation findAccountByCustomerNumber(Long customerNumber);
+
+    public ResponseEntity<Object> transferDetails(TransferDetails transferDetails, Long customerNumber);
+
+    public List<TransactionDetails> findTransactionsByAccountNumber(Long accountNumber);
 
 }
