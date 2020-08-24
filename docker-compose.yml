@@ -3,11 +3,11 @@ services:
   mysql:
     image: 'mysql:8'
     environment:
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_PASSWORD=root
-      - MYSQL_DATABASE=bank-management
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: bank-management
     ports:
-    - "3307:3306"
+    - "3306:3306"
   springboot-docker-container:
     image: springboot-docker-container
     ports:
